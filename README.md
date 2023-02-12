@@ -3,7 +3,9 @@
 # anotações importantes
 
 - Comunicação via callbacks
-´´´
+
+  - Aqui tenho uma comunição de roteamento e autenticação
+```
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { createMemoryHistory, createBrowserHistory } from 'history';
@@ -48,4 +50,4 @@ if (process.env.NODE_ENV === 'development') {
 // We are running through container
 // and we should export the mount function
 export { mount };
-´´´
+```
