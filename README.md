@@ -2,54 +2,50 @@
 
 # anotações importantes
 
-- Fluxo de navegação via callback
-```
- const history =
+- Comunicação via callbacks
+´´´
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { createMemoryHistory, createBrowserHistory } from 'history';
+import App from './App';
+
+// Mount function to start up the app
+const mount = (el, { onSignIn, onNavigate, defaultHistory, initialPath }) => {
+  const history =
     defaultHistory ||
     createMemoryHistory({
       initialEntries: [initialPath],
     });
+
   if (onNavigate) {
-    // filho pro pai
+   // filho pro pai
     history.listen(onNavigate);
   }
-  ReactDOM.render(<App history={history} />, el);
+
+  ReactDOM.render(<App onSignIn={onSignIn} history={history} />, el);
 
   return {
     onParentNavigate({ pathname: nextPathname }) {
       const { pathname } = history.location;
-      // pai pro filho
-      console.log("Container just navigated", nextPathname);
+   // pai pro filho
       if (pathname !== nextPathname) {
         history.push(nextPathname);
       }
     },
   };
 };
-```
 
-- Fluxo de autenticação via callback
-```
-export default ({ onSignIn }) => {
-  const ref = useRef(null);
-  const history = useHistory();
+// If we are in development and in isolation,
+// call mount immediately
+if (process.env.NODE_ENV === 'development') {
+  const devRoot = document.querySelector('#_auth-dev-root');
 
-  useEffect(() => {
-    const { onParentNavigate } = mount(ref.current, {
-      initialPath: history.location.pathname,
-      onNavigate: ({ pathname: nextPathname }) => {
-        const { pathname } = history.location;
+  if (devRoot) {
+    mount(devRoot, { defaultHistory: createBrowserHistory() });
+  }
+}
 
-        if (pathname !== nextPathname) {
-          history.push(nextPathname);
-        }
-      },
-      onSignIn,
-    });
-
-    history.listen(onParentNavigate);
-  }, []);
-
-  return <div ref={ref} />;
-};
-```
+// We are running through container
+// and we should export the mount function
+export { mount };
+´´´
